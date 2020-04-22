@@ -95,7 +95,7 @@ class Player_Bullet(pygame.sprite.Sprite):
         return False
 
 def animate():
-    global enermy_num, player_bullet_num, player_bullet_delay, score, miss, font
+    global enermy_num, player_bullet_num, player_bullet_delay, score, miss, font, running
     screen.fill(bg_color)
     # Enermy
     for enermy in enermies:
@@ -130,9 +130,7 @@ def animate():
         losefont = font.render('You lose!', False, (255,40,40))
         screen.blit(losefont, (size[0]/2-90,size[1]/2-50))
         pygame.display.flip()
-        pygame.time.delay(3000)
-        pygame.quit()
-        sys.exit()
+        running = False
     screen.blit(player.image, player.rect)
     # Other Generation
     for i in range(enermy_num, MAXENERMY):
