@@ -4,14 +4,17 @@ size = (1000,650)
 bg_color = (255,255,255)
 tick = 10
 
-# Game var
+# Game constant number
 MAXENERMY = 3
 MAXSPEED = 3
-MAXPLAYERBULLET = 30
-PLAYERBULLETDELAY = 500
+MAXPLAYERBULLET = 40
+PLAYERBULLETDELAY = 400
+MAXENERMYBULLET = 7
+ENERMYBULLETDELAY = 500
+
+# Game variable number
 player_bullet_num = 0
 enermy_num = 0
-player_bullet_delay = 100
 
 # Score
 score = 0
@@ -26,6 +29,7 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.left, self.rect.top = (100,50)
         self.mask = pygame.mask.from_surface(self.image)
+        self.shooting_CD = 0
 
     def move(self):
         self.pos = pygame.mouse.get_pos()
@@ -53,6 +57,18 @@ class Player(pygame.sprite.Sprite):
             return True
         return False
 
+class Enermy_Bullet(pygame.sprite.Sprite):
+    def __init__(self, location, t):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load('./pic/enermy_bullet.png')
+        self.rect = self.image.get_rect()
+        self.rect = location
+        self.t = t
+        self.mask = pygame.mask.from_surface(self.image)
+
+    def move(self):
+        self.rect = self.rect.move(self.t)
+
 class Enermy(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
@@ -61,6 +77,8 @@ class Enermy(pygame.sprite.Sprite):
         self.rect.left, self.rect.top = (random.randint(1,size[0]-(self.rect.right-self.rect.left)),-100)
         self.t = [0,random.randint(1,MAXSPEED)]
         self.mask = pygame.mask.from_surface(self.image)
+        self.shooting_CD = 0
+        self.bullets = pygame.sprite.Group()
 
     def move(self):
         self.rect = self.rect.move(self.t)
@@ -70,6 +88,16 @@ class Enermy(pygame.sprite.Sprite):
             return True
         return False
 
+    def shooting(self):
+        if self.shooting_CD <= 0:
+            for i in range(0, MAXENERMYBULLET):
+                self.bullets.add(Enermy_Bullet(self.rect, [random.randint(2,6)*(1 if(random.randint(0,1)) else -1),random.randint(2,6)*(1 if(random.randint(0,1)) else -1)]))
+            self.shooting_CD = ENERMYBULLETDELAY
+        for bullet in self.bullets:
+            bullet.move()
+            screen.blit(bullet.image, bullet.rect)
+
+
 class Player_Bullet(pygame.sprite.Sprite):
     def __init__(self, location):
         pygame.sprite.Sprite.__init__(self)
@@ -78,8 +106,6 @@ class Player_Bullet(pygame.sprite.Sprite):
         self.rect.left, self.rect.top = location
         self.t = [0,-7]
         self.mask = pygame.mask.from_surface(self.image)
-
-        # Bullet
 
     def move(self):
         self.rect = self.rect.move(self.t)
@@ -94,13 +120,31 @@ class Player_Bullet(pygame.sprite.Sprite):
             return True
         return False
 
+def death():
+    screen.fill((200,0,0))
+    for enermy in enermies:
+        screen.blit(enermy.image, enermy.rect)
+        for enermy_bullet in enermy.bullets:
+            screen.blit(enermy_bullet.image, enermy_bullet.rect)
+    for player_bullet in player_bullets:
+        screen.blit(player_bullet.image, player_bullet.rect)
+    screen.blit(player.image, player.rect)
+    losefont = font.render('You lose!', False, (255,40,40))
+    screen.blit(losefont, (size[0]/2-90,size[1]/2-50))
+    pygame.display.flip()
+
 def animate():
-    global enermy_num, player_bullet_num, player_bullet_delay, score, miss, font, running
+    global enermy_num, player_bullet_num, score, miss, font, running
     screen.fill(bg_color)
     # Enermy
     for enermy in enermies:
         enermy.move()
+        enermy.shooting()
+        enermy.shooting_CD -= 1
         screen.blit(enermy.image, enermy.rect)
+        if pygame.sprite.spritecollide(player, enermy.bullets, True, pygame.sprite.collide_mask):
+            death()
+            running = False
         if enermy.out():
             enermies.remove(enermy)
             enermy_num -= 1
@@ -121,15 +165,7 @@ def animate():
     # Player
     player.move()
     if player.death():
-        screen.fill((200,0,0))
-        for enermy in enermies:
-            screen.blit(enermy.image, enermy.rect)
-        for player_bullet in player_bullets:
-            screen.blit(player_bullet.image, player_bullet.rect)
-        screen.blit(player.image, player.rect)
-        losefont = font.render('You lose!', False, (255,40,40))
-        screen.blit(losefont, (size[0]/2-90,size[1]/2-50))
-        pygame.display.flip()
+        death()
         running = False
     screen.blit(player.image, player.rect)
     # Other Generation
@@ -137,11 +173,11 @@ def animate():
         enermies.add(Enermy())
         enermy_num += 1
     for i in range(player_bullet_num, MAXPLAYERBULLET):
-        if player_bullet_delay >= PLAYERBULLETDELAY:
+        if player.shooting_CD <= 0:
             player_bullets.add(Player_Bullet(player.get_pos()))
             player_bullet_num += 1
-            player_bullet_delay = 0
-        player_bullet_delay += 1
+            player.shooting_CD = PLAYERBULLETDELAY
+        player.shooting_CD -= 1
     # Font
     hitting = font.render('Score: '+str(score),False,(0,233,233))
     screen.blit(hitting, (10,10))
