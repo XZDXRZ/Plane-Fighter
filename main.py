@@ -90,7 +90,7 @@ class Player_Bullet(pygame.sprite.Sprite):
         return False
 
 def animate():
-    global enermy_num, player_bullet_num, player_bullet_delay, score, miss
+    global enermy_num, player_bullet_num, player_bullet_delay, score, miss, font
     screen.fill(bg_color)
     # Enermy
     for enermy in enermies:
@@ -129,6 +129,11 @@ def animate():
             player_bullet_num += 1
             player_bullet_delay = 0
         player_bullet_delay += 1
+    # Font
+    hitting = font.render('Score: '+str(score),False,(0,233,233))
+    screen.blit(hitting, (10,10))
+    missing = font.render('Miss: '+str(miss),False,(233,233,0))
+    screen.blit(missing, (10,45))
     pygame.display.flip()
     pygame.time.delay(tick)
 
@@ -136,6 +141,7 @@ screen = pygame.display.set_mode(size)
 screen.fill(bg_color)
 
 running = True
+font = pygame.font.SysFont('arial', 40)
 player = Player()
 enermies = pygame.sprite.Group()
 player_bullets = pygame.sprite.Group()
