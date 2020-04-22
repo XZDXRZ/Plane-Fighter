@@ -79,6 +79,8 @@ class Player_Bullet(pygame.sprite.Sprite):
         self.t = [0,-7]
         self.mask = pygame.mask.from_surface(self.image)
 
+        # Bullet
+
     def move(self):
         self.rect = self.rect.move(self.t)
 
@@ -88,7 +90,7 @@ class Player_Bullet(pygame.sprite.Sprite):
         return False
 
     def hit(self):
-        if pygame.sprite.spritecollide(self, enermies, True, pygame.sprite.collide_mask):
+        if pygame.sprite.spritecollide(self, enermies, False, pygame.sprite.collide_mask):
             return True
         return False
 
