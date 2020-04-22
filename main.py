@@ -119,6 +119,16 @@ def animate():
     # Player
     player.move()
     if player.death():
+        screen.fill((200,0,0))
+        for enermy in enermies:
+            screen.blit(enermy.image, enermy.rect)
+        for player_bullet in player_bullets:
+            screen.blit(player_bullet.image, player_bullet.rect)
+        screen.blit(player.image, player.rect)
+        losefont = font.render('You lose!', False, (255,40,40))
+        screen.blit(losefont, (size[0]/2-90,size[1]/2-50))
+        pygame.display.flip()
+        pygame.time.delay(3000)
         pygame.quit()
         sys.exit()
     screen.blit(player.image, player.rect)
