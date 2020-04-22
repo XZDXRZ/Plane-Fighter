@@ -49,7 +49,7 @@ class Player(pygame.sprite.Sprite):
         return [(self.pos[0]+self.weith/2),(self.pos[1]+self.height/2)]
 
     def death(self):
-        if pygame.sprite.spritecollide(self, enermies, True, pygame.sprite.collide_mask):
+        if pygame.sprite.spritecollide(self, enermies, False, pygame.sprite.collide_mask):
             return True
         return False
 
@@ -90,7 +90,7 @@ class Player_Bullet(pygame.sprite.Sprite):
         return False
 
     def hit(self):
-        if pygame.sprite.spritecollide(self, enermies, False, pygame.sprite.collide_mask):
+        if pygame.sprite.spritecollide(self, enermies, True, pygame.sprite.collide_mask):
             return True
         return False
 
