@@ -25,6 +25,7 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.image.load('./pic/player.png')
         self.rect = self.image.get_rect()
         self.rect.left, self.rect.top = (100,50)
+        self.mask = pygame.mask.from_surface(self.image)
 
     def move(self):
         self.pos = pygame.mouse.get_pos()
@@ -48,7 +49,7 @@ class Player(pygame.sprite.Sprite):
         return [(self.pos[0]+self.weith/2),(self.pos[1]+self.height/2)]
 
     def death(self):
-        if pygame.sprite.spritecollide(self, enermies, True):
+        if pygame.sprite.spritecollide(self, enermies, True, pygame.sprite.collide_mask):
             return True
         return False
 
@@ -59,6 +60,7 @@ class Enermy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.left, self.rect.top = (random.randint(1,size[0]-(self.rect.right-self.rect.left)),-100)
         self.t = [0,random.randint(1,MAXSPEED)]
+        self.mask = pygame.mask.from_surface(self.image)
 
     def move(self):
         self.rect = self.rect.move(self.t)
@@ -75,6 +77,7 @@ class Player_Bullet(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.left, self.rect.top = location
         self.t = [0,-7]
+        self.mask = pygame.mask.from_surface(self.image)
 
     def move(self):
         self.rect = self.rect.move(self.t)
@@ -85,7 +88,7 @@ class Player_Bullet(pygame.sprite.Sprite):
         return False
 
     def hit(self):
-        if pygame.sprite.spritecollide(self, enermies, True):
+        if pygame.sprite.spritecollide(self, enermies, True, pygame.sprite.collide_mask):
             return True
         return False
 
