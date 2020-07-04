@@ -2,6 +2,10 @@
 
 **Author: XZDXRZ**
 
+## Latest Update
+
+Add starting page, press "Space" to start game.
+
 ## Before Playing
 
 Please download [PyGame](https://www.pygame.org/) because it's running on PyGame.

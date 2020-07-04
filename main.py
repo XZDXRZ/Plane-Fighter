@@ -1,16 +1,16 @@
-import pygame, sys, random
+import pygame, sys, random, time, threading
 
 size = (1000,650)
 bg_color = (255,255,255)
-tick = 10
+tick = 5#10
 
 # Game constant number
-MAXENERMY = 3
-MAXSPEED = 3
-MAXPLAYERBULLET = 40
-PLAYERBULLETDELAY = 400
-MAXENERMYBULLET = 7
-ENERMYBULLETDELAY = 300
+MAXENERMY = 5#3
+MAXSPEED = 5#3
+MAXPLAYERBULLET = 100#40
+PLAYERBULLETDELAY = 100#400
+MAXENERMYBULLET = 10#7
+ENERMYBULLETDELAY = 100#300
 
 # Initialization
 pygame.init()
@@ -119,6 +119,7 @@ enermy_num = 0
 running = True
 font = pygame.font.SysFont('arial', 40)
 player = Player()
+starting_page_displayed = False
 
 # Game lists
 enermy_bullets = pygame.sprite.Group() # Enermy Bullets
@@ -199,8 +200,42 @@ def animate():
     pygame.display.flip()
     pygame.time.delay(tick)
 
+def get_event():
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+        elif event.type == pygame.K_SPACE:
+            break
+
+# Starting page (Unfinished)
+def starting_page():
+    global starting_page_displayed
+    if not starting_page_displayed:
+        starting_page_displayed = True
+        background = pygame.image.load("./pic/background.jpg")
+        for i in range(0, 200, 10):
+            background.set_alpha(i)
+            screen.blit(background, [0,0])
+            pygame.display.flip()
+            time.sleep(0.05)
+        author = font.render('Auther: XZDXRZ',False,(1,1,1))
+        screen.blit(author,[390, 300])
+        pygame.display.flip()
+        time.sleep(1)
+        background.set_alpha(200)
+        screen.blit(background, [0,0])
+        pygame.display.flip()
+        message = font.render('Press "[Space]" to start...',False,(1,1,1))
+        screen.blit(message,[340, 300])
+        pygame.display.flip()
+        screen.fill(bg_color)
+        pygame.display.flip()
+
 # Main loop
 while running:
+    getting = threading.Thread(target = get_event, args = ())
+    getting.start()
+    starting_page()
     animate()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
