@@ -4,7 +4,7 @@
 
 ## Latest Update
 
-Add starting page, press "Space" to start game.
+Add starting page.
 
 ## Before Playing
 

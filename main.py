@@ -200,13 +200,6 @@ def animate():
     pygame.display.flip()
     pygame.time.delay(tick)
 
-def get_event():
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-        elif event.type == pygame.K_SPACE:
-            break
-
 # Starting page (Unfinished)
 def starting_page():
     global starting_page_displayed
@@ -219,22 +212,24 @@ def starting_page():
             pygame.display.flip()
             time.sleep(0.05)
         author = font.render('Auther: XZDXRZ',False,(1,1,1))
-        screen.blit(author,[390, 300])
+        screen.blit(author,[380, 300])
         pygame.display.flip()
         time.sleep(1)
         background.set_alpha(200)
         screen.blit(background, [0,0])
         pygame.display.flip()
-        message = font.render('Press "[Space]" to start...',False,(1,1,1))
-        screen.blit(message,[340, 300])
-        pygame.display.flip()
+        for i in range(1,4):
+            message = font.render('Starting'+'.'*i,False,(1,1,1))
+            screen.blit(message,[420, 300])
+            pygame.display.flip()
+            time.sleep(0.7)
+            screen.blit(background, [0,0])
+            pygame.display.flip()
         screen.fill(bg_color)
         pygame.display.flip()
 
 # Main loop
 while running:
-    getting = threading.Thread(target = get_event, args = ())
-    getting.start()
     starting_page()
     animate()
     for event in pygame.event.get():
